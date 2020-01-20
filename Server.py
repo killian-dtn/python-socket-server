@@ -20,22 +20,28 @@ class Server():
         self.sock.bind(('', self.port))
         self.sock.listen(self.listen_clt_max)
         asyncio.set_event_loop(self.loop)
-    async def __SockAccept(self):
+    async def __SockAccept(self, use_timeout: bool = True):
         try:
-            async with asyncto.timeout(self.req_timeout):
-                return await self.loop.sock_accept(self.sock)
+            if use_timeout:
+                async with asyncto.timeout(self.req_timeout):
+                    return await self.loop.sock_accept(self.sock)
+            else: return await self.loop.sock_accept(self.sock)
         except (asyncio.TimeoutError, ConnectionResetError, ConnectionAbortedError) as err:
             raise err
-    async def __SockSendAll(self, client: socket.socket, msg: bytes):
+    async def __SockSendAll(self, client: socket.socket, msg: bytes, use_timeout: bool = True):
         try:
-            async with asyncto.timeout(self.req_timeout):
-                return await self.loop.sock_sendall(client, msg)
+            if use_timeout:
+                async with asyncto.timeout(self.req_timeout):
+                    return await self.loop.sock_sendall(client, msg)
+            else: return await self.loop.sock_sendall(client, msg)
         except (asyncio.TimeoutError, ConnectionResetError, ConnectionAbortedError) as err:
             raise err
-    async def __SockRecv(self, client: socket.socket, msg_size: int):
+    async def __SockRecv(self, client: socket.socket, msg_size: int, use_timeout: bool = True):
         try:
-            async with asyncto.timeout(self.req_timeout):
-                return await self.loop.sock_recv(client, msg_size)
+            if use_timeout:
+                async with asyncto.timeout(self.req_timeout):
+                    return await self.loop.sock_recv(client, msg_size)
+            else: return await self.loop.sock_recv(client, msg_size)
         except (asyncio.TimeoutError, ConnectionResetError, ConnectionAbortedError) as err:
             raise err
     async def __AcceptLoopAsync(self):
@@ -45,7 +51,7 @@ class Server():
         while not self.need_stop:
             Server.__Log("Waiting for new clients ...")
             try:
-                clt, clt_inf = await self.__SockAccept()
+                clt, clt_inf = await self.__SockAccept(False)
                 self.clts[clt] = clt_inf
             except asyncio.TimeoutError:
                 continue
