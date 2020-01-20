@@ -6,6 +6,7 @@ import socket
 import time
 from typing import Dict, Tuple
 #from aioconsole import ainput
+import select
 
 class Server():
     def __init__(self, port: int, listen_clt_max: int = 5, req_timeout: float = None):
@@ -36,12 +37,12 @@ class Server():
             else: return await self.loop.sock_sendall(client, msg)
         except (asyncio.TimeoutError, ConnectionResetError, ConnectionAbortedError) as err:
             raise err
-    async def __SockRecv(self, client: socket.socket, msg_size: int, use_timeout: bool = True):
+    async def __SockRecv(self, client: socket.socket, buff_size: int, use_timeout: bool = True):
         try:
             if use_timeout:
                 async with asyncto.timeout(self.req_timeout):
-                    return await self.loop.sock_recv(client, msg_size)
-            else: return await self.loop.sock_recv(client, msg_size)
+                    return await self.loop.sock_recv(client, buff_size)
+            else: return await self.loop.sock_recv(client, buff_size)
         except (asyncio.TimeoutError, ConnectionResetError, ConnectionAbortedError) as err:
             raise err
     async def __AcceptLoopAsync(self):
