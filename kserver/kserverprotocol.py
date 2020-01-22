@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import socket, asyncio as aio, time
-from aioconsole import ainput
 from typing import Dict
 from . import KServerEvent
 
@@ -22,13 +21,6 @@ class KServer():
     async def __async_init(self):
         self.__server = await self.loop.create_server(lambda : KProtocol(self), host = '', port = self.port, family = socket.AF_INET)
         await self.__server.start_serving()
-    async def SendInput(self):
-        while True:
-            if len(self.clts) > 0:
-                msg = (await ainput(">>>"))
-                for clt in list(self.clts.keys()):
-                    clt.write(msg.encode("utf8"))
-            await aio.sleep(0)
     def RunServer(self):
         self.loop.create_task(self.__async_init())
         self.loop.run_forever()
