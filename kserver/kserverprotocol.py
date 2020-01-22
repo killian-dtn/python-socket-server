@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import socket, aio, time
+import socket, asyncio as aio, time
 from aioconsole import ainput
 from typing import Dict
 
