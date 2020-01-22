@@ -14,6 +14,6 @@ class KServerEvent():
         return self
     def __len__(self):
         return len(self.__tasks)
-    def __call__(self, sender: object, *args, **kwargs):
+    def __call__(self, sender: object, msg: str):
         for task in self.tasks:
-            task(*args, **kwargs)
+            task(sender, msg)
