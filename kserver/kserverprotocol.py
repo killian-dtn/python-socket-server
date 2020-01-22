@@ -38,9 +38,9 @@ class KServer():
         self.ConnectionMadeEvent(self, client = transport)
         self.LogEvent(self, msg = f"Connexion made : {self.clts[transport]}")
     def ConnectionLost(self, exc: Exception, transport: aio.Transport):
-        self.ConnectionLostEvent(self, reason = exc, client = transport)
         self.LogEvent(self, msg = f"Connexion lost : {self.clts[transport]}")
         self.clts.pop(transport)
+        self.ConnectionLostEvent(self, reason = exc, client = transport)
     def DataReceived(self, data: bytes, transport: aio.Transport):
         self.DataReceivedEvent(self, msg = data, client = transport)
         self.LogEvent(self, msg = f"Received from {self.clts[transport]} : {data}")
