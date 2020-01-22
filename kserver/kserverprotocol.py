@@ -15,10 +15,9 @@ class KServer():
         # ------------------------ Events ------------------------
         self.ConnectionMadeEvent: KServerEvent = KServerEvent()
         self.ConnectionLostEvent: KServerEvent = KServerEvent()
-        self.DataReceived: KServerEvent = KServerEvent()
-        self.ConnectionMadeEvent += self.Log
-        self.ConnectionLostEvent += self.Log
-        self.DataReceived += self.Log
+        self.DataReceivedEvent: KServerEvent = KServerEvent()
+        self.LogEvent: KServerEvent = KServerEvent()
+        self.LogEvent += self.Log
         # --------------------------------------------------------
     async def __async_init(self):
         self.__server = await self.loop.create_server(lambda : KProtocol(self), host = '', port = self.port, family = socket.AF_INET)
@@ -36,12 +35,12 @@ class KServer():
     # -------------------- Protocol callbacks --------------------
     def ConnectionMade(self, transport: aio.Transport):
         self.clts[transport] = transport.get_extra_info("peername")
-        self.ConnectionMadeEvent(self, f"Connexion made : {self.clts[transport]}")
+        self.LogEvent(self, msg = f"Connexion made : {self.clts[transport]}")
     def ConnectionLost(self, exc: Exception, transport: aio.Transport):
-        self.ConnectionLostEvent(self, f"Connexion lost : {self.clts[transport]}")
+        self.LogEvent(self, msg = f"Connexion lost : {self.clts[transport]}")
         self.clts.pop(transport)
     def DataReceived(self, data: bytes, transport: aio.Transport):
-        self.DataReceived(self, f"Received from {self.clts[transport]} : {data}")
+        self.LogEvent(self, msg = f"Received from {self.clts[transport]} : {data}")
     # ------------------------------------------------------------
 
 class KProtocol(aio.Protocol):
