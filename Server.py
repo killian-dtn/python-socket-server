@@ -73,6 +73,7 @@ class Server():
                         Server.__Log("Response from {} : {}.".format(clt_inf, await self.__SockRecv(clt, 255)))
                     except (asyncio.TimeoutError, ConnectionResetError, ConnectionAbortedError) as err:
                         Server.__Log(f"Ping not received : {err}")
+                        clt.close()
                         self.clts.pop(clt)
                 Server.__Log("All clients pinged.")
             else:
