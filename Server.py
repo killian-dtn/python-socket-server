@@ -5,12 +5,13 @@ from aioconsole import ainput
 from typing import Dict
 
 class KServer():
-    def __init__(self):
+    def __init__(self, port: int):
         self.__loop: asyncio.BaseEventLoop = asyncio.get_event_loop()
         self.__server: asyncio.Server = None
+        self.port = port
         self.clts: Dict[asyncio.Transport, object] = {}
     async def __async_init(self):
-        self.__server = await self.__loop.create_server(lambda : KProtocol(self), host = '', port = 55555, family = socket.AF_INET)
+        self.__server = await self.__loop.create_server(lambda : KProtocol(self), host = '', port = self.port, family = socket.AF_INET)
         await self.__server.start_serving()
     async def SendInput(self):
         while True:
@@ -48,4 +49,4 @@ class KProtocol(asyncio.Protocol):
     def data_received(self, data: bytes):
         self.__server.DataReceived(data, self.__sock_transport)
 
-KServer().RunServer()
+KServer(55555).RunServer()
