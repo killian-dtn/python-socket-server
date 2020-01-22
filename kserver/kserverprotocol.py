@@ -13,10 +13,10 @@ class KServer():
         self.Log: callable = Log
         self.clts: Dict[aio.Transport, object] = {}
         # ------------------------ Events ------------------------
-        self.ConnectionMadeEvent: KServerEvent = KServerEvent()
-        self.ConnectionLostEvent: KServerEvent = KServerEvent()
-        self.DataReceivedEvent: KServerEvent = KServerEvent()
-        self.LogEvent: KServerEvent = KServerEvent()
+        self.ConnectionMadeEvent: KServerEvent = KServerEvent() # args : client
+        self.ConnectionLostEvent: KServerEvent = KServerEvent() # args : reason, client
+        self.DataReceivedEvent: KServerEvent = KServerEvent()   # args : msg, client
+        self.LogEvent: KServerEvent = KServerEvent()            # args : msg
         self.LogEvent += self.Log
         # --------------------------------------------------------
     async def __async_init(self):
@@ -35,11 +35,14 @@ class KServer():
     # -------------------- Protocol callbacks --------------------
     def ConnectionMade(self, transport: aio.Transport):
         self.clts[transport] = transport.get_extra_info("peername")
+        self.ConnectionMadeEvent(self, client = transport)
         self.LogEvent(self, msg = f"Connexion made : {self.clts[transport]}")
     def ConnectionLost(self, exc: Exception, transport: aio.Transport):
+        self.ConnectionLostEvent(self, reason = exc, client = transport)
         self.LogEvent(self, msg = f"Connexion lost : {self.clts[transport]}")
         self.clts.pop(transport)
     def DataReceived(self, data: bytes, transport: aio.Transport):
+        self.DataReceivedEvent(self, msg = data, client = transport)
         self.LogEvent(self, msg = f"Received from {self.clts[transport]} : {data}")
     # ------------------------------------------------------------
 
