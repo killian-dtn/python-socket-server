@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
-
 class KServerEvent():
     def __init__(self):
-        self.__tasks: List[callable] = []
-    def __call__(self):
+        self.__tasks = set()
+    def __iadd__(self, handler):
+        self.__tasks.add(handler)
+        return self
+    def __isub__(self, handler):
+        try:
+            self.__tasks.remove(handler)
+        except:
+            raise ValueError("No handler.")
+        return self
+    def __len__(self):
+        return len(self.__tasks)
+    def __call__(self, sender: object, *args, **kwargs):
         for task in self.tasks:
-            task()
-    def InsertTask(self, task: callable):
-        self.__tasks.append(task)
+            task(*args, **kwargs)
