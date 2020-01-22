@@ -3,7 +3,7 @@
 import tkinter as tk
 import asyncio as aio
 from typing import List
-from kserverprotocol import KServer
+from . import KServer
 
 class KServerInterface(tk.Tk):
     def __init__(self, server: KServer):

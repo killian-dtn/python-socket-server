@@ -3,7 +3,7 @@
 import socket, asyncio as aio, time
 from aioconsole import ainput
 from typing import Dict
-from kserverevent import KServerEvent
+from . import KServerEvent
 
 class KServer():
     def __init__(self, port: int, Log: callable = lambda sender, msg: print("{} : {}".format(time.strftime("[%H:%M:%S]"), msg))):
