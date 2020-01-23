@@ -46,7 +46,7 @@ class KServerInterface(tk.Tk):
         try:
             if command not in self.commands.keys(): raise KeyError
             for item in selected_items:
-                self.commands[command](target = item)
+                self.commands[command](interface = self, target = self.clts[item])
         except KeyError:
             self.server.Log(msg = f"No command \"{command}\".")
         except Exception:
