@@ -42,10 +42,12 @@ class KServerInterface(tk.Tk):
     def ExecCommand(self, command: str):
         selected_items = [self.ClientsListbox.get(i) for i in self.ClientsListbox.curselection()]
         try:
-            self.commands[command](targets = selected_items)
+            if command not in self.commands.keys(): raise KeyError
+            for item in selected_items:
+                self.commands[command](target = item)
         except KeyError:
             self.server.Log(msg = f"No command \"{command}\".")
-        except TypeError:
+        except Exception:
             raise
         finally:
             self.server.Log(msg = f"Command : {command}, on target(s) : {selected_items}")
