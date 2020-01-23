@@ -34,9 +34,10 @@ class KServerInterface(tk.Tk):
         self.clts[txt] = client
     def ConnectionLost(self, sender, reason: Exception, client: aio.Transport):
         self.ClientsListbox.delete(0, tk.END)
-        if len(self.server.clts.keys()) > 0:
-            self.ClientsListbox.insert(tk.END, list(self.server.clts.keys()))
         self.clts.pop(str(client.get_extra_info("peername")))
+        if len(self.clts) > 0:
+            for clt in list(self.clts.keys()):
+                self.ClientsListbox.insert(tk.END, clt)
     def DataReceived(self, sender, msg: bytes, client: aio.Transport):
         pass
     # -------------------------------------------------------------------------
