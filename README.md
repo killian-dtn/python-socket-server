@@ -23,12 +23,19 @@ server = KServer(55555, CustomLog)
 # ...
 kiface = KServerInterface(server)
 
-def HelloWorld(interface, target):
+def Send(interface, target, *args):
   # Mandatory args:
   # - interface is the KServerInterface object that will call the command
   # - target is one of the asyncio.Transport objects selected on the interface Listbox
-  target.write(b"Hello world !")
+  # - *args
+  target.write((" ".join(args)).encode("utf8"))
   
-kiface.commands["helloworld"] = HelloWorld
+kiface.commands["send"] = Send
+kiface.Run()
+```
+### Alias example
+```python
+# ...
+kiface.commands["helloworld"] = lambda interface, target, *args: Send(interface, target, "Hello World!")
 kiface.Run()
 ```
