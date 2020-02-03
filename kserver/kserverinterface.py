@@ -43,16 +43,17 @@ class KServerInterface(tk.Tk):
     # -------------------------------------------------------------------------
     def ExecCommand(self, command: str):
         selected_items = [self.ClientsListbox.get(i) for i in self.ClientsListbox.curselection()]
+        cmd_parts = command.split()
         try:
-            if command not in self.commands.keys(): raise KeyError
+            if cmd_parts[0] not in self.commands.keys(): raise KeyError
             for item in selected_items:
-                self.commands[command](interface = self, target = self.clts[item])
+                self.commands[cmd_parts[0]](self, self.clts[item], *(cmd_parts[1:]))
         except KeyError:
-            self.server.Log(msg = f"No command \"{command}\".")
+            self.server.Log(msg = f"No command \"{cmd_parts[0]}\".")
         except Exception:
             raise
         finally:
-            self.server.Log(msg = f"Command : {command}, on target(s) : {selected_items}")
+            self.server.Log(msg = f"Command : {cmd_parts[0]}, on target(s) : {selected_items}")
         self.CommandEntry.delete(0, tk.END)
     def Render(self):
         self.ClientsListbox.pack(fill = tk.BOTH, expand = True)
